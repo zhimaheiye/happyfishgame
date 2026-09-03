@@ -14,6 +14,7 @@
 |---|---|
 | 项目核心目标、长期契约、红线与工作原则 | [`PROJECT.md`](PROJECT.md) |
 | 数据字段定义、Schema 演化规则、合法值 | [`docs/data-model.md`](docs/data-model.md) |
+| 游戏官方分类体系、本体论与标签来源映射 | [`docs/game-ontology.md`](docs/game-ontology.md) |
 | 当前采集做到哪里、此时此刻正在干什么、下一步接手 | [`docs/handoff/CURRENT.md`](docs/handoff/CURRENT.md) |
 | 游戏图鉴 UI 结构、操作流、坐标与异常跳过逻辑 | [`docs/workflows/atlas-collection.md`](docs/workflows/atlas-collection.md) |
 | ADB 环境配置、稳定连接、截图与点击经验、踩坑记录 | [`docs/playbook/adb.md`](docs/playbook/adb.md) |

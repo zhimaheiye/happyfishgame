@@ -20,7 +20,12 @@ def call_bridge(action, args=None):
 
 
 def ensure_chatgpt_tab():
-  call_bridge("find_tab", {"url": "chatgpt.com", "active": True})
+  # Check if current tab is already ChatGPT
+  res = call_bridge("evaluate", {"code": "window.location.href"})
+  url = res.get("data", {}).get("value", "")
+  if "chatgpt.com" not in url:
+    call_bridge("navigate", {"url": "https://chatgpt.com/c/6a994387-6dbc-83ec-ab43-eb2672ec1aa3"})
+    time.sleep(4.0)
 
 
 def send_to_gpt(text: str) -> bool:

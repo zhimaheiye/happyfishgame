@@ -15,59 +15,64 @@
 |---|---|---|---|---|
 | `fish_id` | `string \| null` | 否 | `null` | 游戏官方唯一识别码。**若游戏内未明示官方永久ID，暂置 null，严禁 AI 自造虚假永久 ID**。 |
 | `atlas_index` | `integer \| null` | 否 | `null` | 当前图鉴卡片逻辑顺位（1 ~ 4331）。 |
-| `atlas_locator` | `object \| null` | 否 | `null` | 临时采集定位信息（如 `{"anchor": 100, "row": 1, "col": 1}`），在未确切证明全局严格连续序号前使用。 |
+| `atlas_locator` | `object \| null` | 否 | `null` | 临时采集定位信息（如 `{"anchor": 100, "row": 1, "col": 1}`）。 |
 | `name` | `string` | **是** | - | 鱼类名称，严格依照游戏详情页标题。 |
-| `collection_state` | `string` | **是** | `"unknown"` | 玩家拥有/解锁状态：`"owned"`（已拥有）、`"unowned"`（未拥有/未解锁）、`"unknown"`。 |
-| `category_tag` | `string \| null` | 否 | `null` | 详情页显示的类别标签（例如：“真实鱼”、“神话鱼”等）。 |
-| `description` | `string \| null` | 否 | `null` | 鱼类简介/特征描述文本（如“活泼，好动”）。 |
-| `produce_time_raw` | `string \| null` | 否 | `null` | 产宝时间原文（如 `"15秒"`、`"2小时"`）。**对于 `unowned` 鱼类，游戏隐藏此时段，应明确置为 `null`，严禁进 unresolved**。 |
-| `produce_time_seconds` | `integer \| null` | 否 | `null` | 标准化产宝周期（换算为秒）。转换失败或无法确认时填 `null`。 |
-| `crown_time_raw` | `string \| null` | 否 | `null` | 皇冠时间原文（如 `"60分钟"`、`"24小时"`）。**对于 `unowned` 鱼类置为 `null`**。 |
+| `atlas_light_state` | `string` | **是** | `"unknown"` | 官方图鉴点亮状态：`"lit"`（已点亮/已解锁）、`"unlit"`（未点亮/未解锁）、`"unknown"`。 |
+| `inventory_quantity` | `integer \| null` | 否 | `null` | 玩家背包/水族箱当前持有数量（来自卡片角标如 `X88` -> 88，`X0` -> 0）。 |
+| `collection_state` | `string` | 否 | `"unknown"` | [已弃用/兼容保留] `"owned"` (lit) / `"unowned"` (unlit)。 |
+| `official_tags` | `string[]` | 否 | `[]` | 官方多维鱼类分类标签数组（如 `["神秘鱼", "发光鱼"]`）。 |
+| `detail_category_raw` | `string \| null` | 否 | `null` | 详情弹窗直接显示的原始类别文字行。 |
+| `description` | `string \| null` | 否 | `null` | 鱼类简介/特征描述文本（如“活泼，好动”）。**对于未点亮鱼类此字段为 null**。 |
+| `produce_time_raw` | `string \| null` | 否 | `null` | 产宝时间原文（如 `"15秒"`、`"2小时"`）。**对于 `unlit` 鱼类置为 `null`**。 |
+| `produce_time_seconds` | `integer \| null` | 否 | `null` | 标准化产宝周期（换算为秒）。 |
+| `crown_time_raw` | `string \| null` | 否 | `null` | 皇冠时间原文（如 `"60分钟"`、`"24小时"`）。**对于 `unlit` 鱼类置为 `null`**。 |
 | `crown_time_minutes` | `integer \| null` | 否 | `null` | 标准化皇冠周期（换算为分钟）。 |
-| `acquisition_raw` | `string` | **是** | `""` | **核心证据字段**：游戏内显示的获取来源全部原始文字（如“商店购买”、“宝石兑换”、“参加XXXX活动获得”）。 |
-| `acquisition_type` | `string[]` | **是** | `[]` | 标准化获取类型列表（支持多对多），参见下方细化枚举。 |
+| `official_acquisition_category` | `string \| null` | 否 | `null` | 游戏官方 10 大获取来源大类（官方桶：`"shop"`, `"event"`, `"fusion"`, `"baby_fish"`, `"gem_exchange"`, `"crown_exchange"`, `"shell_shard"`, `"magic_summon"`, `"deep_sea"`, `"other"`）。 |
+| `acquisition_raw` | `string` | **是** | `""` | **核心证据字段**：游戏内显示的获取来源原始文字（如“商店购买”、“宝石兑换”、“钓鱼达人”）。 |
+| `acquisition_type` | `string[]` | **是** | `[]` | 内部标准化获取类型细分子类（如 `["fishing"]`, `["shop"]`）。 |
 | `produce_items` | `object[]` | 否 | `[]` | 产宝内容（宝物名称、产出贝币、经验数值等详情对象）。 |
-| `availability` | `string` | **是** | `"unknown"` | 当前版本可获得性判定，只允许合法状态枚举。 |
+| `availability` | `string` | **是** | `"unknown"` | 当前版本可获得性判定：`"current"`, `"unavailable"`, `"uncertain"`, `"unknown"`。 |
 | `source` | `string` | **是** | `"in_game_atlas"` | 数据源标识（游戏图鉴为 `"in_game_atlas"`）。 |
-| `screenshot` | `string` | **是** | `""` | 存证全屏/详情截图相对路径（如 `"raw/screenshots/sample_0001_xxx.png"`）。 |
-| `verified_at` | `string` | **是** | - | 采集/校验通过的 ISO-8601 时间戳（如 `"2026-09-03T18:00:00Z"`）。 |
-| `notes` | `string \| null` | 否 | `null` | 采集过程中的特征补充、异常标记或特殊观察。 |
+| `screenshot` | `string` | **是** | `""` | 存证全屏/详情截图相对路径。 |
+| `verified_at` | `string` | **是** | - | 采集/校验通过的 ISO-8601 时间戳。 |
+| `notes` | `string \| null` | 否 | `null` | 采集补充特征与备注。 |
 
 ---
 
 ## 二、标准化枚举取值规范
 
-### 1. 拥有与解锁状态 (`collection_state`)
-- `owned`：玩家已拥有该鱼（卡片显示具体拥有数量如 X88，详情展示产宝与皇冠时间）。
-- `unowned`：玩家未拥有/未解锁该鱼（卡片显示 X0 或锁头，详情展示“很遗憾，你还没有解锁这条鱼…”横条提示，产宝/皇冠时间被游戏官方隐藏）。
-- `unknown`：状态无法判定。
+### 1. 官方图鉴点亮与持有数量 (`atlas_light_state` & `inventory_quantity`)
+- `atlas_light_state`:
+  - `lit`：已点亮。卡片头像彩色常亮，有皇冠/星标进度；详情页拥有完整名称、简介与产宝参数。
+  - `unlit`：未点亮。卡片头像带锁头遮罩或灰暗态；详情页隐藏周期并显示“很遗憾，你还没有解锁这条鱼…”提示。
+- `inventory_quantity`:
+  - 整数数值（0, 1, 88...），严格解析自卡片右下角 `X{N}`。实测已证实存在“`inventory_quantity == 0` 但 `atlas_light_state == 'lit'`”的合法样本（如历史已毕业但当前无存货的星座鱼）。
 
-> [!NOTE]
-> **UI 语义与数据质量红线**：未拥有鱼的产宝与皇冠时间被游戏隐藏属于**正常预期行为**，此时 `produce_time_raw: null`，**严禁**因此将样本判定为识别失败而丢入 `unresolved`。只有当鱼为 `owned` 且字段区域被遮挡、渲染残缺时，才属于真正的识别异常。
+### 2. 官方获取来源大类与内部细化子类
+- **官方桶 (`official_acquisition_category`)**：
+  `shop`, `event`, `fusion`, `baby_fish`, `gem_exchange`, `crown_exchange`, `shell_shard`, `magic_summon`, `deep_sea`, `other`。
+- **内部标准化细分子类 (`acquisition_type`)**：
+  `shop`, `gem_exchange`, `crown_exchange`, `event`, `fishing`（钓鱼达人，归属于官方 other 桶）、`fusion`, `magic_summon`, `shell_shard`, `baby_fish`, `deep_sea`, `mission`, `atlas_reward`（图鉴获得，归属于官方 other 桶）、`other`。
 
-### 2. 获取方式标准化分类 (`acquisition_type`)
-根据游戏官方标签体系与实机采样细化分类：
-- `shop`：常驻商店直接购买（贝币/开心宝/元宝）。
-- `gem_exchange`：宝石兑换（消耗特定配比的宝石兑换，共 124 种配方）。
-- `crown_exchange`：皇冠兑换（消耗特定皇冠鱼兑换，共 98 种配方）。
-- `event`：限时活动/节日活动获得。
-- `fishing`：钓鱼达人（小游戏钓鱼玩法产出，如星座鱼）。
-- `fusion`：融合系统（章鱼博士配方/限时融合）。
-- `magic_summon`：魔力召唤（初级/高级水晶召唤祭坛）。
-- `shell_shard`：贝壳与碎片（普通/金贝壳开贝系统及碎片合成）。
-- `baby_fish`：鱼宝宝系统培育。
-- `deep_sea`：深海鱼系统。
-- `mission`：皇冠任务/成长任务/日常任务奖励。
-- `other`：其他特定玩法系统。
-- `unknown`：获取方式存在但无法归入上述类别或尚未查明。
+### 3. 官方鱼类分类标签 (`official_tags`)
+多值数组：`"真实鱼"`, `"美食鱼"`, `"仿物鱼"`, `"人型鱼"`, `"发光鱼"`, `"神秘鱼"`, `"系列鱼"`, `"鱼群"`, `"高级鱼群"`。
 
-### 3. 官方鱼类分类标签 (`category_tag`)
-游戏内置 9 大官方分类标签：
-- `真实鱼`、`美食鱼`、`仿物鱼`、`人型鱼`、`发光鱼`、`神秘鱼`、`系列鱼`、`鱼群`、`高级鱼群`（一条鱼可同时拥有多个标签，以空格分隔）。
+---
 
-> **红线**：即便标注了 `acquisition_type: ["gem_exchange"]`，也必须同时保留 `acquisition_raw: "宝石兑换"`。
+## 三、宝石兑换配方数据集：`data/gem-recipes.jsonl`
 
-### 3. 当前可用性 (`availability`)
+对应 Phase 3A 专项采集，全量收录游戏内 124 种宝石兑换鱼的固定材料配方：
+
+| 字段名 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `recipe_id` | `string` | **是** | 项目内部稳定生成的配方ID（如 `"gem_recipe_001"`），非官方ID。 |
+| `target_fish` | `string` | **是** | 目标兑换鱼类名称（如 `"雌熊猫鱼"`）。 |
+| `method_type` | `string` | **是** | 固定为 `"gem_exchange"`。 |
+| `requirements` | `object[]` | **是** | 所需宝石材料清单数组：`[{"resource_type": "gem", "resource_name_raw": "嫩绿叶宝石", "quantity": 30}]`。 |
+| `rewards` | `object[]` | **是** | 兑换产出鱼：`[{"type": "fish", "name": "雌熊猫鱼", "quantity": 1}]`。 |
+| `source` | `string` | **是** | `"in_game_gem_exchange"`。 |
+| `screenshot` | `string` | **是** | 兑换卡片存证截图相对路径。 |
+| `verified_at` | `string` | **是** | ISO-8601 采集时间戳。 |
 - `current`：当前游戏内明确可以直接通过常驻手段（如商店常驻购买）获取。
 - `unavailable`：当前明确已绝版或历史活动未返场。
 - `uncertain`：无法从当前图鉴文字推断当前是否开放（如活动鱼、兑换鱼未探明具体要求）。
