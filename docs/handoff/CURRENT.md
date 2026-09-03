@@ -14,34 +14,38 @@
 
 ## 二、Current Progress (当前进展)
 - **图鉴基数总量**：`4331`
-- **正式入库数量**：`0`
-- **有效抽样测试**：已成功捕获小丑鱼详情页、未拥有熊猫鱼等测试截图（存放在 `raw/screenshots/`）
+- **正式入库数量**：`30`（首批 30 条跨区段结构样本已全量入库 `data/fish.jsonl`，0 异常）
+- **关联获取途径表**：已同步沉淀 30 条获取途径至 `data/acquisition-methods.jsonl`
+- **图鉴界面状态**：`STATE_ATLAS_READY`（已验证并建立确定性恢复状态机）
+- **获取类型覆盖**：`shop`（商店购买）、`gem_exchange`（宝石兑换）、`crown_exchange`（皇冠兑换）、`event`（活动获得）、`fishing`（钓鱼达人）
 - **Unresolved 异常数**：`0`
 
 ---
 
 ## 三、Current Position (当前断点位置)
-- **模拟器状态**：MuMu 模拟器处于活跃状态（`127.0.0.1:16384`），位于游戏内。
-- **环境验证**：ADB 通信、1920x1080 物理分辨率适配、截图与无损中转逻辑均已验证可用。
-- **UI 探索**：已区分“千鱼收集”（分章节集邮）与“全局大图鉴”（4331 总量），并记录坐标体系。
+- **当前所处界面**：4331 全局大图鉴（区段 300 附近）。
+- **模拟器状态**：MuMu 模拟器处于活跃状态（`127.0.0.1:16384`），分辨率 1920x1080。
+- **自动化底座**：已建立 `scripts/recovery.py`、`scripts/sample_collector.py`、`scripts/gpt_collab.py`。
 
 ---
 
 ## 四、Current Method (当前采用方法)
-- **控制链路**：Python `subprocess` 调用 `platform-tools/adb.exe`。
-- **解析链路**：全屏存证截图保存至 `raw/screenshots/`，经 OCR / 视觉提取后写入 `data/fish.jsonl`，异常写入 `unresolved/unresolved.jsonl`。
+- **控制与恢复链路**：Python ADB 通信 + `scripts/recovery.py` RapidOCR 强特征（4331 基数、搜索/标签、区段导航）校验。
+- **数据结构链路**：
+  - 鱼实体核心信息入 `data/fish.jsonl`（含 `collection_state: owned | unowned`、`acquisition_type` 细化枚举）；
+  - 途径详情解耦入 `data/acquisition-methods.jsonl`；
+  - 异常样本入 `unresolved/unresolved.jsonl`。
 
 ---
 
 ## 五、Current Problems (当前待解决/关注问题)
-1. 需编写轻量级、确定性的采集脚本 `scripts/sample_collector.py`，实现“点击 -> 截图 -> 提取 -> 关闭 -> 下一条”的稳定循环。
-2. 跨区段（前部 1~50、100、500、1000、2000+）验证是否存在与小丑鱼（商店直接购买）完全不同的特殊详情页模板。
+1. 现有 30 条样本覆盖区段 1～300，仍偏向头部，需展开第二轮远距离跨区段抽样（500、1000、1500、2000、2500、3000、3500、4000+）；
+2. 探查“获得来源按钮后有什么”：选取代表性鱼类点击进入兑换/商城，确认具体宝石与资源需求结构；
+3. 验证 `atlas_index` 与右侧锚点的真实对应关系。
 
 ---
 
 ## 六、Next Actions (下一步明确动作)
-任何新 Agent 接手后，请直接执行以下动作：
-1. 确认 Git 提交状态已干净；
-2. 按照 `docs/workflows/atlas-collection.md` 规范编写首批抽样采集脚本；
-3. 执行采集并沉淀首批 30 条样本至 `data/fish.jsonl`；
-4. 校验 `docs/data-model.md` 是否需要补充新字段，并将执行进度更新回本文档。
+1. 将当前成果（30条样本、新脚本、工作流与模型更新）提交并 push 到 GitHub 远端；
+2. 开展远距离跨区段结构抽样（500～4000+，每个区段抽选 3~5 条）；
+3. 选定典型兑换鱼（如熊猫鱼、老鼠鱼）探查并记录其所需材料明细至 `data/acquisition-methods.jsonl`。
