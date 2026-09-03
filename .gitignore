@@ -1,0 +1,23 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Scratch & Temporary crops
+raw/crop_*.png
+raw/test_*.png
+raw/screenshots/current_*.png
+raw/dump.xml
+
+# Logs
+logs/sessions/*.log
