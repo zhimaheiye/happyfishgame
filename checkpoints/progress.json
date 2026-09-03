@@ -1,10 +1,5 @@
 {
-  "total_atlas_count": 4331,
-  "processed_count": 30,
-  "success_count": 30,
-  "unresolved_count": 0,
-  "current_section": "区段 300",
-  "current_index": 30,
-  "last_updated": "2026-09-03T10:58:35.919034+00:00",
-  "status": "completed"
+  "total_samples": 59,
+  "unresolved_count": 5,
+  "status": "COMPLETED_60_DIVERSE_SAMPLES"
 }

@@ -82,6 +82,7 @@ def is_atlas_ready(screenshot_path=None):
 def recover_to_atlas(max_attempts=2):
     """
     意外退出大图鉴的确定性恢复流程:
+    0. 若当前处于次级弹窗/子页面，先点左上角返回 (70, 65) 退出到主水族箱
     1. 点击右下角宝箱 (1830, 950)
     2. 底部功能栏从左至右第 5 个书形按钮 (1195, 915)
     3. 顶栏最右侧 Tab 6 (1245, 90)
@@ -90,6 +91,11 @@ def recover_to_atlas(max_attempts=2):
     for attempt in range(1, max_attempts + 1):
         print(f"[RECOVERY] 尝试执行图鉴恢复 (第 {attempt}/{max_attempts} 次)...")
         ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        # Step 0: 弹窗退栈（若处于详情页或仓库等，先退回到主水族箱界面）
+        for _ in range(2):
+            tap(70, 65)
+            time.sleep(0.8)
 
         # Step 1: 点击右下角宝箱
         print(f"[RECOVERY] 步骤 1: 点击右下角宝箱气泡 (1830, 950)")
@@ -102,8 +108,8 @@ def recover_to_atlas(max_attempts=2):
         time.sleep(2.0)
 
         # Step 3: 点击下一层最右侧按钮 (Tab 6 金色图鉴书)
-        print(f"[RECOVERY] 步骤 3: 点击顶栏最右侧 Tab 6 (1245, 90)")
-        tap(1245, 90)
+        print(f"[RECOVERY] 步骤 3: 点击顶栏最右侧 Tab 6 (1260, 85)")
+        tap(1260, 85)
         time.sleep(2.5)
 
         # Step 4: 验证特征

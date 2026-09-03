@@ -1,0 +1,5 @@
+{"atlas_index": 14, "suspected_name": "未知鱼类", "reason": "从标签筛选返回大图鉴后卡片未及时渲染，点击空屏误采顶部搜索文字", "screenshot": "raw/screenshots/sample_0014_20260903_105708.png", "created_at": "2026-09-03T10:57:10.139695+00:00", "status": "pending"}
+{"atlas_index": 61, "suspected_name": "搜索", "reason": "从标签筛选返回大图鉴后卡片未及时渲染，点击空屏误采顶部搜索文字", "screenshot": "raw/screenshots/sample_0061_20260903_210447.png", "created_at": "2026-09-03T13:04:47.343457+00:00", "status": "pending"}
+{"atlas_index": 62, "suspected_name": "搜索", "reason": "从标签筛选返回大图鉴后卡片未及时渲染，点击空屏误采顶部搜索文字", "screenshot": "raw/screenshots/sample_0062_20260903_210452.png", "created_at": "2026-09-03T13:04:52.440322+00:00", "status": "pending"}
+{"atlas_index": 63, "suspected_name": "调节碎片数量", "reason": "从标签筛选返回大图鉴后卡片未及时渲染，点击空屏误采顶部搜索文字", "screenshot": "raw/screenshots/sample_0063_20260903_210459.png", "created_at": "2026-09-03T13:04:59.915575+00:00", "status": "pending"}
+{"atlas_index": 64, "suspected_name": "调节碎片数量", "reason": "从标签筛选返回大图鉴后卡片未及时渲染，点击空屏误采顶部搜索文字", "screenshot": "raw/screenshots/sample_0064_20260903_210508.png", "created_at": "2026-09-03T13:05:08.417030+00:00", "status": "pending"}
