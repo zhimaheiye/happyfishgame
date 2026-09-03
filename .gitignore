@@ -16,8 +16,16 @@ Thumbs.db
 # Scratch & Temporary crops
 raw/crop_*.png
 raw/test_*.png
-raw/screenshots/current_*.png
 raw/dump.xml
+
+# Storage Policy: Ignore debug & intermediate fullscreen screenshots in Git
+raw/screenshots/*.png
+!raw/screenshots/sample_*.png
+raw/screenshots/recovery/
+raw/screenshots/gem_exchange_rows/
+raw/screenshots/gem_recipes/recipe_*.png
+raw/screenshots/gem_recipes/seq_recipe_*.png
 
 # Logs
 logs/sessions/*.log
+logs/*.txt

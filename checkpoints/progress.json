@@ -1,5 +1,16 @@
 {
-  "total_samples": 59,
+  "phase": "PHASE_3A_1",
+  "status": "GEM_EXCHANGE_114_CANONICAL_CHECKPOINT",
+  "canonical_fish_count": 59,
+  "account_observations_count": 59,
+  "gem_recipes_expected": 124,
+  "gem_recipes_canonical": 114,
+  "gem_recipes_raw_observations": 186,
+  "gem_recipes_down_pass": 102,
+  "gem_recipes_up_pass": 84,
+  "crown_recipes_expected": 98,
+  "crown_recipes_collected": 0,
   "unresolved_count": 5,
-  "status": "COMPLETED_60_DIVERSE_SAMPLES"
+  "schema_version": "v0.4.0",
+  "updated_at": "2026-09-03T23:52:00Z"
 }
