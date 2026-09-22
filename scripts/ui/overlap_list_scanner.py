@@ -2,14 +2,14 @@
 
 设计目标：
 1. 通用性：解耦滚动逻辑与卡片解析，可同时服务于 Gem Exchange (124) 与 Crown Exchange (98)；
-2. 零遗漏保证：使用 0.5H 小步长 (约 160px) 密集重叠滑动，彻底杜绝跳行；
-3. 双向闭环（Bidirectional Pass）：
+2. 覆盖率增强：使用约 0.5H 小步长（约 160px）密集重叠滑动，降低单向扫描跳卡风险；
+3. 双向交叉扫描（Bidirectional Pass）：
    - Pass A: Top → Bottom
    - Pass B: Bottom → Top
 4. 两级去重合并：
    - Level 1: 目标名称规范化
    - Level 2: 视觉感知哈希 (dHash) 指纹比对
-5. 自动输出 Scan Manifest 与完整性报告。
+5. 输出扫描统计与候选数据，最终完整性仍需独立目标集和实际卡片证据验证。
 """
 
 import os
