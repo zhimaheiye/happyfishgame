@@ -50,13 +50,13 @@ class OverlapListScanner:
         self.swipe_step_px = swipe_step_px
         self.swipe_duration_ms = swipe_duration_ms
         self.raw_observations = []
-        
+
     def ensure_tab(self):
         if self.tab_coords:
             print(f"[{self.name}] Ensuring Tab at {self.tab_coords}...")
             tap(self.tab_coords[0], self.tab_coords[1])
             time.sleep(1.2)
-            
+
     def scroll_to_top(self):
         print(f"[{self.name}] Scrolling to absolute top...")
         self.ensure_tab()
@@ -64,14 +64,14 @@ class OverlapListScanner:
             adb_cmd(['shell', 'input', 'swipe', '500', '300', '500', '950', '180'])
             time.sleep(0.2)
         time.sleep(1.2)
-        
+
     def scroll_to_bottom(self):
         print(f"[{self.name}] Scrolling to absolute bottom...")
         for _ in range(10):
             adb_cmd(['shell', 'input', 'swipe', '500', '950', '500', '300', '180'])
             time.sleep(0.2)
         time.sleep(1.2)
-        
+
     def run_pass(self, direction: str, card_detector_fn, max_steps=80, max_no_new=12):
         """
         Run a single unidirectional pass with dense overlap.
@@ -81,19 +81,19 @@ class OverlapListScanner:
         pass_observations = []
         no_new_count = 0
         step = 0
-        
+
         seen_in_pass = set()
-        
+
         while step < max_steps and no_new_count < max_no_new:
             step += 1
             screen_path = f'raw/screenshots/scanner_{self.name}_{direction}_step_{step:03d}.png'
             capture_screen(screen_path)
             im = Image.open(screen_path)
-            
+
             # Detect cards in current viewport
             cards = card_detector_fn(im, screen_path, step)
             new_this_step = 0
-            
+
             for c in cards:
                 c['scan_pass'] = direction
                 c['step'] = step
@@ -103,14 +103,14 @@ class OverlapListScanner:
                     seen_in_pass.add(card_key)
                     pass_observations.append(c)
                     new_this_step += 1
-                    
+
             if new_this_step == 0:
                 no_new_count += 1
             else:
                 no_new_count = 0
-                
+
             print(f"[{direction.upper()} Step {step:2d}] Cards seen: {len(cards)} | New: {new_this_step} | Total in pass: {len(seen_in_pass)}")
-            
+
             # Execute dense swipe
             if direction == 'down':
                 y_start = 650
@@ -118,47 +118,47 @@ class OverlapListScanner:
             else:
                 y_start = 350
                 y_end = y_start + self.swipe_step_px
-                
+
             adb_cmd(['shell', 'input', 'swipe', '500', str(y_start), '500', str(y_end), str(self.swipe_duration_ms)])
             time.sleep(0.8)
-            
+
         print(f"[{self.name}] Pass {direction.upper()} Finished. Total cards: {len(pass_observations)}")
         return pass_observations
 
     def run_bidirectional_scan(self, card_detector_fn, target_expected=None):
         """Execute Top-to-Bottom then Bottom-to-Top, then merge & dedupe."""
         self.scroll_to_top()
-        
+
         # Pass 1: Top to Bottom
         pass_down = self.run_pass('down', card_detector_fn)
-        
+
         # Pass 2: Bottom to Top
         pass_up = self.run_pass('up', card_detector_fn)
-        
+
         # Merge observations
         all_obs = pass_down + pass_up
         print(f"\n[{self.name}] Raw observations collected: {len(all_obs)} (Down: {len(pass_down)}, Up: {len(pass_up)})")
-        
+
         # Deduplication Level 1 (Name) and Level 2 (Visual Fingerprint)
         canonical = []
         seen_names = set()
         seen_hashes = set()
-        
+
         for obs in all_obs:
             name = obs.get('name_clean')
             vhash = obs.get('card_hash')
-            
+
             if name and name in seen_names:
                 continue
             if vhash and vhash in seen_hashes:
                 continue
-                
+
             if name:
                 seen_names.add(name)
             if vhash:
                 seen_hashes.add(vhash)
-                
+
             canonical.append(obs)
-            
+
         print(f"[{self.name}] Canonical deduplicated count: {len(canonical)} (Target: {target_expected})")
         return canonical, pass_down, pass_up

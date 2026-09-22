@@ -1,6 +1,6 @@
 # docs/handoff/CURRENT.md：当前任务实时交接锚点
 
-> **注意**：本文档只记录**此时此刻**正在做的事情、当前断点与下一步。  
+> **注意**：本文档只记录**此时此刻**正在做的事情、当前断点与下一步。
 > 长期经验与通用规则应直接更新至 `data-model.md`、`atlas-collection.md` 或 `storage-policy.md`，禁止在此堆砌冗余历史。
 
 ---
@@ -10,8 +10,8 @@
 2. [已完成] Phase 2.6 核心 Wiki 实体与采集账号主观状态彻底解耦（Schema 升至 v0.4.0，账号状态沉淀至 `data/account-observations.jsonl`）；
 3. [已完成] 仓储体积与截图策略评估（`docs/playbook/storage-policy.md`）；
 4. [已完成] 研发通用双向密集重叠扫描器（`scripts/ui/overlap_list_scanner.py`）；
-5. [当前断点] Phase 3A-1 宝石兑换大盘双向闭环扫描达成 **114 / 124**（186 条原始 Observation，Down: 102, Up: 84，完整性报告落盘 `reports/gem-exchange-completeness.json`）；
-6. [下一步接手] 补全 Gem Exchange 剩余 10 条缺口配方达成 124 完整性闭环 → 启动 Crown 98 配方采集。
+5. [当前断点] Phase 3A-1 宝石兑换大盘双向交叉扫描达成 **114 / 124 候选卡片**（186 条原始 Observation，Down: 102, Up: 84，完整性报告落盘 `reports/gem-exchange-completeness.json`；注：该 114 条属于初筛候选集，包含 OCR 拼接脏数据，尚未全量核验）；
+6. [下一步接手] 结合大图鉴独立目标集锁定缺失项 + 重新校验清洗 114 条候选脏数据 → 达成 124 闭环验证 → 启动 Crown 98 配方采集。
 
 ---
 
@@ -19,14 +19,15 @@
 - **图鉴基数总量**：`4331`
 - **正式入库鱼类实体**：`59` 条纯净 Canonical 鱼类事实（Schema v0.4.0，无账号状态污染）
 - **采集账号观察状态**：`59` 条独立账号物理观察至 `data/account-observations.jsonl`
-- **宝石兑换配方数据集**：`114` 条规范化配方至 `data/gem-recipes.jsonl`（包含 `card_visual_hash` 视觉指纹与 `required_quantity` 客观需求）
-- **配方卡片高保真截图**：`114` 张独立切片留存于 `raw/screenshots/gem_recipes/canonical_*.png`
+- **宝石兑换配方候选集**：`114` 条初步候选配方至 `data/gem-recipes.jsonl`
+  > [!CAUTION]
+  > **数据质量现状警示**：114 条仅代表视口扫描去重后的候选卡片数量，**绝不代表 114 条配方内容已全部正确**。目前存在普遍的 OCR 错位与数字拼接（如 `required_quantity` 被误拼为 `80999`、`75667730` 等），以及鱼名截断（如 `(绿)`、`(蓝)`、`兔子鱼(雌`）。在完成切片重解析与质检前，严禁作为 Wiki 最终事实或下游工具输入。
+- **配方卡片高保真截图**：`114` 张独立切片完整保留于 `raw/screenshots/gem_recipes/canonical_*.png`（作为后续重解析的唯一物理事实源，严禁删除）
 - **双向扫描原始观察**：
   - Pass DOWN（Top → Bottom 密集 160px 步长）：捕获 102 张卡片
   - Pass UP（Bottom → Top 密集 160px 步长）：捕获 84 张卡片
-  - 两级去重（名称 + dHash 指纹）合并：**114 条有效配方**
-  - 完整性差距：当前缺口 10 条（分析表明为部分双行鱼名识别边界及尾部惯性所致）
-- **完整性报告落盘**：`reports/gem-exchange-completeness.json`
+  - 交叉去重后当前候选：**114 条**（距官方标示 124 条尚有 10 条缺口，表明两遍扫描仍存在共同盲区）
+- **扫描统计报告落盘**：`reports/gem-exchange-completeness.json`（`is_complete = false`）
 
 ---
 
@@ -37,27 +38,28 @@
 ---
 
 ## 四、Known Risks & Mitigations (已知风险与规避方案)
-1. **活动弹窗干扰拦截**：
-   - 现象：误点可能唤出“绿野寻仙踪”等多层活动全屏弹窗；
-   - 规避：已测定活动右上角绿色圆叶 `[X]` 绝对物理坐标为 `(1815, 122)`，连击两次即可完全关闭弹窗并回到安全层级。
-2. **文本输入法聚焦白条**：
+1. **活动弹窗干扰拦截（历史本机实测经验）**：
+   - 现象：误点可能唤出“绿野寻仙踪”等全屏宣传弹窗；
+   - 适用限定：仅限 1920×1080 本机现场中视觉上具有同款木桩绿色圆叶叉号的弹窗；
+   - 规程：视觉确认后单次点击 `(1815, 122)`，等待截图复检；若下一层仍为同款弹窗方可再次单次点击，严禁盲目连击；界面变化立即停止并重新评估。
+2. **文本输入法聚焦白条（历史本机实测经验）**：
    - 现象：点击搜索区域可能弹出 Android 软键盘/顶部文本条；
-   - 规避：发送 `adb shell input keyevent 4`（Back 键）或点击空白区域即可退出输入态。
+   - 规程：发送 `adb shell input keyevent 4`（Back 键）尝试收起输入态。此为本机现场经验，执行后必须重新截图校验当前实际界面状态。
 
 ---
 
 ## 五、Verification Commands (现场复现与验证)
 ```powershell
-# 1. 验证宝石兑换配方数据与卡片证据
+# 1. 验证宝石兑换候选配方数据与卡片证据
 python -c "
 import json
 with open('data/gem-recipes.jsonl', 'r', encoding='utf-8') as f:
     recs = [json.loads(l) for l in f if l.strip()]
-print(f'Canonical Recipes: {len(recs)}')
+print(f'Candidate Recipes: {len(recs)}')
 assert len(recs) == 114
 with open('reports/gem-exchange-completeness.json', 'r', encoding='utf-8') as f:
     rep = json.load(f)
-print('Completeness Report:', rep['canonical_recipes'], '/', rep['expected_recipes'])
+print('Completeness Report:', rep['canonical_recipes'], '/', rep['expected_recipes'], 'is_complete:', rep['is_complete'])
 "
 
 # 2. 验证 Schema v0.4.0 纯净实体与账号观察解耦
@@ -76,15 +78,15 @@ assert 'inventory_quantity' in obs[0]
 ---
 
 ## 六、Next Actions (接手 Agent 立即执行动作)
-1. **建立独立目标鱼集合 (Independent Target Set)**：
-   - 绝不靠单纯将步长调为 120px 反复盲目重扫碰运气；
-   - 先在大图鉴（4331 Atlas）中通过【标签查找】筛选【获取来源 = 宝石兑换】；
-   - 提取该筛选结果下的所有目标鱼名称列表（`independent_target_set`）；
-2. **集合差运算精确锁定 10 条缺口**：
+1. **建立独立目标鱼集合并做差集比对 (Independent Target Set)**：
+   - 在大图鉴（4331 Atlas）中通过【标签查找】筛选【获取来源 = 宝石兑换】；
+   - 遍历提取该筛选结果下的目标鱼名称列表（`independent_target_set`）；
    - 计算差集：`missing_names = independent_target_set - set(r['target_fish'] for r in gem_recipes)`；
-   - 若 Atlas 结果恰好 124 条，证实 1-fish-1-recipe，直接根据算出的缺失鱼名定向定位并切片卡片；
-   - 若 Atlas 结果少于 124 条（如 120），则证实存在一鱼多配方，防止误合并；
-3. **达成 124/124 完整性证明**：
-   - 结合 Top-Down 与 Bottom-Up 双向互证，生成最终无差异闭环报告；
-4. **切入 Phase 3A-2**：
-   - 确认无误后复用同一通用扫描器，切换至 Tab 3 (`1162, 82`) 启动皇冠兑换 98 种配方全量采集。
+   - **形成假设并实证检验**：数量对比仅形成假设，还需核查 Atlas 筛选是否完整、OCR 是否漏截、是否真实存在“一鱼多配方”的物理卡片；只有图文证据确凿后方可确立映射关系；
+2. **缺口定向补采与扫描诊断**：
+   - 针对明确缺失的鱼名在兑换列表中进行定向抓取；
+   - 重新扫描（如微调步长）可作为诊断或补证手段，但不应作为唯一的闭环依赖；
+3. **清洗现有 114 条候选脏数据**：
+   - 利用已保存的 `raw/screenshots/gem_recipes/canonical_*.png` 高清卡片切片，重跑高精 OCR 修复 `required_quantity` 数字拼接异常（如 `80999`）与截断鱼名；
+4. **达成 124 终极闭环并切入 Phase 3A-2**：
+   - 生成最终无差异闭环报告后，复用同一扫描器切换至 Tab 3 (`1162, 82`) 启动皇冠兑换 98 种配方全量采集。
