@@ -76,6 +76,15 @@ assert 'inventory_quantity' in obs[0]
 ---
 
 ## 六、Next Actions (接手 Agent 立即执行动作)
-1. 查阅 `reports/gem-exchange-completeness.json` 中的 `missing_from_top_down` 与 `missing_from_bottom_up`；
-2. 针对缺口的 10 条配方，在 `OverlapListScanner` 中增加卡片标题局部自适应阈值，或将步长微调至 120px 做一次定向补帧扫荡，使 `data/gem-recipes.jsonl` 达到 124/124 完美闭环；
-3. 直接调用 `OverlapListScanner` 切换至 Tab 3 (`1162, 82`)，全量采集皇冠兑换 98 种配方。
+1. **建立独立目标鱼集合 (Independent Target Set)**：
+   - 绝不靠单纯将步长调为 120px 反复盲目重扫碰运气；
+   - 先在大图鉴（4331 Atlas）中通过【标签查找】筛选【获取来源 = 宝石兑换】；
+   - 提取该筛选结果下的所有目标鱼名称列表（`independent_target_set`）；
+2. **集合差运算精确锁定 10 条缺口**：
+   - 计算差集：`missing_names = independent_target_set - set(r['target_fish'] for r in gem_recipes)`；
+   - 若 Atlas 结果恰好 124 条，证实 1-fish-1-recipe，直接根据算出的缺失鱼名定向定位并切片卡片；
+   - 若 Atlas 结果少于 124 条（如 120），则证实存在一鱼多配方，防止误合并；
+3. **达成 124/124 完整性证明**：
+   - 结合 Top-Down 与 Bottom-Up 双向互证，生成最终无差异闭环报告；
+4. **切入 Phase 3A-2**：
+   - 确认无误后复用同一通用扫描器，切换至 Tab 3 (`1162, 82`) 启动皇冠兑换 98 种配方全量采集。
